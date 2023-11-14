@@ -1,0 +1,7 @@
+[project]
+authors = [
+  {name = "darkhaniop", email = "darkhaniop@gmail.com"},
+]
+description = "RESTful API for HTCondor HPC job scheduler (FastAPI-based)."
+name = "simple-task-api-htc"
+version = "0.0.2"
