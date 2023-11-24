@@ -5,3 +5,9 @@ authors = [
 description = "RESTful API for HTCondor HPC job scheduler (FastAPI-based)."
 dynamic = ["version"]
 name = "simple-task-api-htc"
+
+[project.scripts]
+simple-task-api-htc = "app.main:cli"
+
+[tool.setuptools.packages.find]
+include = ["app"]
