@@ -1,0 +1,732 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "TaskAPI for HTCondor",
+    "description": "RESTful API for HTCondor HPC job scheduler (PydanticV2-based spec output).",
+    "version": "0.0.2"
+  },
+  "paths": {
+    "/api/status": {
+      "get": {
+        "tags": [
+          "General"
+        ],
+        "description": "Server status",
+        "responses": {
+          "200": {
+            "description": "Server status",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ServerStatus"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/htc-clusters": {
+      "post": {
+        "tags": [
+          "HTCondor"
+        ],
+        "description": "New HTC Cluster",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/HTCClusterCreate"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTCCluster"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/htc-clusters/{cluster_id}": {
+      "get": {
+        "tags": [
+          "HTCondor"
+        ],
+        "description": "Show HTC Cluster",
+        "parameters": [
+          {
+            "name": "cluster_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "description": "The identifier of the cluster.",
+              "title": "Cluster Id"
+            },
+            "description": "The identifier of the cluster."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTCClusterWithTask"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/tasks": {
+      "get": {
+        "tags": [
+          "Tasks"
+        ],
+        "description": "Tasks (all)",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TaskListResponse"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "Tasks"
+        ],
+        "description": "Create Task",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/TaskCreate"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Created Task",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Task"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/tasks-completed": {
+      "get": {
+        "tags": [
+          "Tasks"
+        ],
+        "description": "Tasks completed",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TaskListResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/tasks-queued": {
+      "get": {
+        "tags": [
+          "Tasks"
+        ],
+        "description": "Tasks queued",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TaskListResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/tasks/{task_id}": {
+      "get": {
+        "tags": [
+          "Tasks"
+        ],
+        "description": "Show Task",
+        "parameters": [
+          {
+            "name": "task_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "description": "The identifier of the Task.",
+              "title": "Task Id"
+            },
+            "description": "The identifier of the Task."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Task"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "Tasks"
+        ],
+        "description": "Update Task",
+        "parameters": [
+          {
+            "name": "task_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "description": "The identifier of the task.",
+              "title": "Task Id"
+            },
+            "description": "The identifier of the task."
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/TaskUpdateRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Updated Task",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Task"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/htc-job-events": {
+      "post": {
+        "tags": [
+          "HTCondor"
+        ],
+        "description": "Post a new log entry",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/HTCJobEventPost"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTCJobEvent"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/log/{entry_id}": {
+      "get": {
+        "tags": [
+          "HTCondor"
+        ],
+        "description": "Get log entry",
+        "parameters": [
+          {
+            "name": "entry_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "title": "Entry Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/log": {
+      "post": {
+        "tags": [
+          "HTCondor"
+        ],
+        "description": "Post a new log entry",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/LogEntryCreate"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "HTCCluster": {
+        "properties": {
+          "id": {
+            "type": "integer"
+          },
+          "creationDate": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "taskId": {
+            "type": "string"
+          },
+          "subParams": {
+            "additionalProperties": true,
+            "type": "object"
+          },
+          "clusterAd": {
+            "additionalProperties": true,
+            "type": "object"
+          },
+          "firstProc": {
+            "type": "integer"
+          },
+          "numProcs": {
+            "type": "integer"
+          },
+          "status": {
+            "$ref": "#/components/schemas/HTCClusterStatusPartial"
+          }
+        },
+        "type": "object",
+        "required": [
+          "id"
+        ]
+      },
+      "HTCClusterCreate": {
+        "properties": {
+          "id": {
+            "type": "integer"
+          },
+          "taskId": {
+            "type": "string",
+            "default": "-"
+          },
+          "subParams": {
+            "additionalProperties": true,
+            "type": "object"
+          },
+          "clusterAd": {
+            "additionalProperties": true,
+            "type": "object"
+          },
+          "firstProc": {
+            "type": "integer",
+            "default": 0
+          },
+          "numProcs": {
+            "type": "integer"
+          },
+          "status": {
+            "$ref": "#/components/schemas/HTCClusterStatusPartial"
+          }
+        },
+        "type": "object",
+        "required": [
+          "id"
+        ]
+      },
+      "HTCClusterStatusPartial": {
+        "properties": {
+          "clusterState": {
+            "type": "integer"
+          },
+          "procs": {
+            "items": {
+              "additionalProperties": true,
+              "type": "object"
+            },
+            "type": "array"
+          }
+        },
+        "type": "object"
+      },
+      "HTCClusterWithTask": {
+        "properties": {
+          "kind": {
+            "type": "string",
+            "const": "htc-cluster-with-task"
+          },
+          "cluster": {
+            "$ref": "#/components/schemas/HTCCluster"
+          },
+          "task": {
+            "$ref": "#/components/schemas/Task"
+          },
+          "extra": {
+            "additionalProperties": true,
+            "type": "object"
+          }
+        },
+        "type": "object"
+      },
+      "HTCJobEvent": {
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "creationDate": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "clusterId": {
+            "type": "integer"
+          },
+          "procId": {
+            "type": "integer"
+          },
+          "timestamp": {
+            "type": "number"
+          },
+          "eventType": {
+            "type": "string"
+          },
+          "details": {
+            "additionalProperties": true,
+            "type": "object"
+          }
+        },
+        "type": "object",
+        "required": [
+          "clusterId",
+          "procId",
+          "eventType",
+          "timestamp"
+        ]
+      },
+      "HTCJobEventPost": {
+        "properties": {
+          "clusterId": {
+            "type": "integer"
+          },
+          "procId": {
+            "type": "integer"
+          },
+          "timestamp": {
+            "type": "number"
+          },
+          "eventType": {
+            "type": "string"
+          },
+          "details": {
+            "additionalProperties": true,
+            "type": "object"
+          }
+        },
+        "type": "object"
+      },
+      "HTTPValidationError": {
+        "properties": {
+          "detail": {
+            "items": {
+              "$ref": "#/components/schemas/ValidationError"
+            },
+            "type": "array",
+            "title": "Detail"
+          }
+        },
+        "type": "object",
+        "title": "HTTPValidationError"
+      },
+      "LogEntryCreate": {
+        "properties": {
+          "kind": {
+            "type": "string",
+            "const": "log-entry-new"
+          },
+          "clusterId": {
+            "type": "integer"
+          },
+          "procId": {
+            "type": "integer"
+          },
+          "timestamp": {
+            "type": "number"
+          },
+          "eventType": {
+            "type": "string"
+          },
+          "details": {
+            "additionalProperties": true,
+            "type": "object"
+          }
+        },
+        "type": "object",
+        "required": [
+          "clusterId",
+          "procId",
+          "timestamp"
+        ]
+      },
+      "ServerStatus": {
+        "properties": {
+          "kind": {
+            "type": "string",
+            "const": "dtaskapi-htc-server-status"
+          },
+          "responseDate": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "nTasksQueued": {
+            "type": "integer"
+          },
+          "nTasksSubmitted": {
+            "type": "integer"
+          },
+          "nTasksCompleted": {
+            "type": "integer"
+          },
+          "nTasksCompletedWithError": {
+            "type": "integer"
+          },
+          "nTasksTimedOut": {
+            "type": "integer"
+          }
+        },
+        "type": "object"
+      },
+      "Task": {
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "creationDate": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "subParams": {
+            "additionalProperties": {
+              "type": "string"
+            },
+            "type": "object"
+          },
+          "state": {
+            "type": "integer"
+          },
+          "stateDate": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "retriesLeft": {
+            "type": "integer",
+            "default": 3
+          },
+          "clusterId": {
+            "type": "integer"
+          },
+          "procId": {
+            "type": "integer"
+          },
+          "expirationDate": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "latestSubId": {
+            "type": "string"
+          }
+        },
+        "type": "object",
+        "required": [
+          "id"
+        ]
+      },
+      "TaskCreate": {
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "state": {
+            "type": "integer",
+            "default": 0
+          },
+          "subParams": {
+            "additionalProperties": {
+              "type": "string"
+            },
+            "type": "object"
+          },
+          "retriesLeft": {
+            "type": "integer",
+            "default": 2
+          }
+        },
+        "type": "object"
+      },
+      "TaskListResponse": {
+        "properties": {
+          "kind": {
+            "type": "string",
+            "const": "hpctask-list"
+          },
+          "responseDate": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "items": {
+            "items": {
+              "$ref": "#/components/schemas/Task"
+            },
+            "type": "array"
+          }
+        },
+        "type": "object",
+        "required": [
+          "responseDate",
+          "items"
+        ]
+      },
+      "TaskUpdateRequest": {
+        "properties": {
+          "state": {
+            "type": "integer"
+          },
+          "retriesLeft": {
+            "type": "integer"
+          },
+          "clusterId": {
+            "type": "integer"
+          },
+          "procId": {
+            "type": "integer"
+          },
+          "expirationDate": {
+            "type": "string",
+            "format": "date-time"
+          }
+        },
+        "type": "object"
+      },
+      "ValidationError": {
+        "properties": {
+          "loc": {
+            "items": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "integer"
+                }
+              ]
+            },
+            "type": "array",
+            "title": "Location"
+          },
+          "msg": {
+            "type": "string",
+            "title": "Message"
+          },
+          "type": {
+            "type": "string",
+            "title": "Error Type"
+          }
+        },
+        "type": "object",
+        "required": [
+          "loc",
+          "msg",
+          "type"
+        ],
+        "title": "ValidationError"
+      }
+    }
+  },
+  "tags": [
+    {
+      "name": "Tasks",
+      "description": "Task is a higher level abstraction for managing HTCondor submissions."
+    },
+    {
+      "name": "Log Entries",
+      "description": "Management of task execution logs."
+    },
+    {
+      "name": "HTCondor",
+      "description": "Management of HTCondor clusters."
+    }
+  ]
+}
