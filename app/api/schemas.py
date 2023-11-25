@@ -201,10 +201,10 @@ class Task(BaseModel):
     state: int
     stateDate: datetime
     retriesLeft: int = 3
-    clusterId: int
-    procId: int
-    expirationDate: datetime
-    latestSubId: str
+    clusterId: int | None = None
+    procId: int | None = None
+    expirationDate: datetime | None = None
+    latestSubId: str | None = None
 
     @staticmethod
     def _schema_extra(schema):

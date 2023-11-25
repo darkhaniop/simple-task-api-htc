@@ -6,6 +6,7 @@
 
 from __future__ import annotations
 
+from dataclasses import asdict
 from typing import Annotated
 
 from fastapi import APIRouter, Path
@@ -24,6 +25,8 @@ from .schemas import (
     HTCClusterWithTask,
     REMOVE_OPERATION_ID_AND_SUMMARY,
 )
+from ..common import db_ops
+from ..common.models import SchemaInstances
 
 
 router = APIRouter()
@@ -37,7 +40,8 @@ router = APIRouter()
 )
 async def get_server_status():
     "Server status"
-    pass
+
+    return asdict(db_ops.get_status())
 
 
 @router.post(
@@ -72,7 +76,11 @@ async def get_htc_cluster(
 )
 async def task_collection():
     "Tasks (all)"
-    pass
+
+    task_list_response = db_ops.get_tasks_all()
+    response_schema = SchemaInstances.get_task_list_response_schema()
+    print(task_list_response)
+    return response_schema.dump(task_list_response)
 
 
 @router.get(
