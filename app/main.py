@@ -1,6 +1,7 @@
 """simple-task-api-htc.main"""
 
 import asyncio
+from contextlib import asynccontextmanager
 import json
 from typing import cast
 
@@ -11,7 +12,23 @@ from hypercorn.typing import Framework
 
 from .api import router as api_router
 from .api.schemas import OPENAPI_TAGS
+from .common import db_models
 from .version import __version__
+
+
+@asynccontextmanager
+async def fastapi_lifespan(app: FastAPI):
+    """app lifespan"""
+
+    print(f"lifespan init {app}")
+    # init db
+    db_models.db.my_init()
+
+    yield
+
+    # close db
+    print(f"lifespan close {app}")
+    db_models.db.my_close()
 
 
 def create_app() -> FastAPI:
@@ -24,6 +41,7 @@ def create_app() -> FastAPI:
             "RESTful API for HTCondor HPC job scheduler (PydanticV2-based spec output)."
         ),
         openapi_tags=OPENAPI_TAGS,
+        lifespan=fastapi_lifespan,
     )
     app.include_router(api_router, prefix="/api")
     return app
