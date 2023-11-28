@@ -9,7 +9,7 @@ from __future__ import annotations
 from dataclasses import asdict
 from typing import Annotated
 
-from fastapi import APIRouter, Path
+from fastapi import APIRouter, HTTPException, Path
 
 from .schemas import (
     Task,
@@ -26,6 +26,7 @@ from .schemas import (
     REMOVE_OPERATION_ID_AND_SUMMARY,
 )
 from ..common import db_ops
+from ..common import models as msm_models
 from ..common.models import SchemaInstances
 
 
@@ -91,7 +92,11 @@ async def task_collection():
 )
 async def get_tasks_completed():
     "Tasks completed"
-    pass
+
+    task_list_response = db_ops.get_tasks_completed()
+    response_schema = SchemaInstances.get_task_list_response_schema()
+    print(task_list_response)
+    return response_schema.dump(task_list_response)
 
 
 @router.get(
@@ -102,7 +107,11 @@ async def get_tasks_completed():
 )
 async def get_tasks_queued():
     "Tasks queued"
-    pass
+
+    task_list_response = db_ops.get_tasks_queued()
+    response_schema = SchemaInstances.get_task_list_response_schema()
+    print(task_list_response)
+    return response_schema.dump(task_list_response)
 
 
 @router.post(
@@ -115,7 +124,15 @@ async def get_tasks_queued():
 )
 async def task_collection_post(new_task: TaskCreate):
     "Create Task"
-    pass
+
+    task_create_schema = SchemaInstances.get_task_create_schema()
+    new_task_msm: msm_models.Task = task_create_schema.loads(new_task.model_dump_json()) # type: ignore
+
+    task = db_ops.create_task(new_task_msm)
+
+    task_schema = SchemaInstances.get_task_schema()
+
+    return task_schema.dump(task)
 
 
 @router.get(
@@ -128,7 +145,15 @@ async def get_task(
     task_id: Annotated[str, Path(description="The identifier of the Task.")],
 ):
     "Show Task"
-    pass
+
+    print(f"get task {task_id}")
+    task = db_ops.get_task_by_id(task_id)
+    if task is None:
+        raise HTTPException(status_code=404, detail="not-found")
+
+    task_schema = SchemaInstances.get_task_schema()
+
+    return task_schema.dump(task)
 
 
 @router.post(
@@ -142,7 +167,14 @@ async def update_task(
     task_update: TaskUpdateRequest,
 ):
     "Update Task"
-    pass
+
+    task_update_request_schema = SchemaInstances.get_task_update_request_schema()
+    task_update_request: msm_models.TaskUpdateRequest = task_update_request_schema.loads(task_update.model_dump_json()) # type: ignore
+    task = db_ops.update_task(task_id, task_update_request)
+
+    task_schema = SchemaInstances.get_task_schema()
+
+    return task_schema.dump(task)
 
 
 @router.post(

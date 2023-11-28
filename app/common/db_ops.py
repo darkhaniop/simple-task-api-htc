@@ -102,6 +102,17 @@ def get_tasks_all():
     return TaskListResponse(response_date=utcnow, items=task_list)
 
 
+def get_task_by_id(task_id: str) -> Optional[Task]:
+    with dbm.db_rlock:
+        db_task: dbm.Task = dbm.Task.query.get(task_id)
+        if db_task is None:
+            return None
+
+        task = db_task.dump_obj()
+
+    return task
+
+
 def create_task(task: Task) -> Task:
     with dbm.db_rlock:
         if task.id is None:
