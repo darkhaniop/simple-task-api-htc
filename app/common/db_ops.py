@@ -197,6 +197,12 @@ def reset_expired_tasks():
             print(f"timed out tasks:\n{timed_out_task_ids}")
 
 
+def get_db_htc_cluster_by_id(cluster_id: int) -> Optional[dbm.HTCCluster]:
+    with dbm.db_rlock:
+        db_htc_cluster = dbm.HTCCluster.query.get(cluster_id)
+    return db_htc_cluster
+
+
 def get_or_create_db_htc_cluster_by_id(cluster_id: int) -> dbm.HTCCluster:
     with dbm.db_rlock:
         db_htc_cluster = dbm.HTCCluster.query.get(cluster_id)

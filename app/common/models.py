@@ -435,6 +435,8 @@ class SchemaInstances:
     _task_update_request_schema: Optional[TaskUpdateRequestSchema] = None
     _task_list_response_schema: Optional[TaskListResponseSchema] = None
     _htc_cluster_schema: Optional[HTCClusterSchema] = None
+    _htc_cluster_create_schema: Optional[HTCClusterCreateSchema] = None
+    _htc_cluster_with_task_schema: Optional[HTCClusterWithTaskSchema] = None
     _htc_job_event_schema: Optional[HTCJobEventSchema] = None
     _htc_job_event_create_schema: Optional[HTCJobEventSchema] = None
 
@@ -472,6 +474,20 @@ class SchemaInstances:
         if not cls._htc_cluster_schema:
             cls._htc_cluster_schema = HTCClusterSchema()
         return cls._htc_cluster_schema
+
+    @classmethod
+    def get_htc_cluster_create_schema(cls) -> HTCClusterCreateSchema:
+        """Get the HTCClusterSchema instance"""
+        if not cls._htc_cluster_create_schema:
+            cls._htc_cluster_create_schema = HTCClusterCreateSchema()
+        return cls._htc_cluster_create_schema
+
+    @classmethod
+    def get_htc_cluster_with_task_schema(cls) -> HTCClusterWithTaskSchema:
+        """Get the HTCClusterSchema instance"""
+        if not cls._htc_cluster_with_task_schema:
+            cls._htc_cluster_with_task_schema = HTCClusterWithTaskSchema()
+        return cls._htc_cluster_with_task_schema
 
     @classmethod
     def get_htc_job_event_schema(cls) -> HTCJobEventSchema:

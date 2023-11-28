@@ -7,7 +7,7 @@
 from __future__ import annotations
 
 from dataclasses import asdict
-from typing import Annotated
+from typing import Annotated, Any
 
 from fastapi import APIRouter, HTTPException, Path
 
@@ -53,7 +53,42 @@ async def get_server_status():
 )
 async def htc_cluster_collection_post(new_htc_cluster: HTCClusterCreate):
     """New HTC Cluster"""
-    pass
+
+    htc_cluster_create_schema = SchemaInstances.get_htc_cluster_create_schema()
+    new_htc_cluster_msm: msm_models.HTCCluster = htc_cluster_create_schema.loads(new_htc_cluster.model_dump_json())  # type: ignore
+    htc_cluster = db_ops.create_htc_cluster(new_htc_cluster_msm)
+
+    if db_ops.update_cluster_task(htc_cluster.id):  # type: ignore
+        # task_update_status = "task_updated"
+        print("task updated")
+
+    htc_cluster_schema = SchemaInstances.get_htc_cluster_schema()
+
+    return htc_cluster_schema.dumps(htc_cluster)
+
+
+def get_cluster_with_task(*, cluster_id: int | None = None) -> dict[str, Any]:
+    """Get a cluster and the corresponding task object."""
+
+    if cluster_id is None:
+        return {"cluster": None, "task": None}
+
+    db_htc_cluster = db_ops.get_db_htc_cluster_by_id(cluster_id)
+    if db_htc_cluster is None:
+        return {"cluster": None, "task": None}
+    htc_cluster = db_htc_cluster.dump_obj()
+    task_id: str | None = db_htc_cluster.task_id # type: ignore
+
+    if task_id is not None and task_id != "-":
+        db_task = db_ops.get_task_by_id(task_id)
+        task_dict = db_task.dump_obj()  # pyright: ignore[reportOptionalMemberAccess]
+    else:
+        db_task = None
+        task_dict = None
+
+    return {"cluster": htc_cluster, "task": task_dict}
+
+
 
 
 @router.get(
@@ -66,7 +101,14 @@ async def get_htc_cluster(
     cluster_id: Annotated[int, Path(description="The identifier of the cluster.")],
 ):
     """Show HTC Cluster"""
-    pass
+
+    cluster_with_task = get_cluster_with_task(cluster_id=cluster_id)
+
+    if cluster_with_task["cluster"] is None:
+        raise HTTPException(status_code=404, detail="not-found")
+
+    htc_cluster_with_task_schema = SchemaInstances.get_htc_cluster_with_task_schema()
+    return htc_cluster_with_task_schema.dump(cluster_with_task)
 
 
 @router.get(
