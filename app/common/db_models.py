@@ -61,10 +61,10 @@ class SQLAlchemy:
 
     # session: Session
 
-    def my_init(self):
+    def my_init(self, echo: bool=False):
         """sqla my_init"""
 
-        self.engine = sqlalchemy.create_engine("sqlite:///stapi_htc.db", echo=True)
+        self.engine = sqlalchemy.create_engine("sqlite:///stapi_htc.db", echo=echo)
 
     def my_close(self):
         """sqla my_close"""
