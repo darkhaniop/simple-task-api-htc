@@ -23,12 +23,38 @@ from .models import (
 )
 
 
+def get_default_task_id() -> str:
+    """Get the default task ID"""
+
+    with dbm.db_rlock:
+        task_id = "default"
+        db_task: Optional[dbm.Task] = dbm.Task.query.get(task_id)
+        if db_task is None:
+            # create default task
+            db_task = dbm.Task(
+                id=task_id,
+                retries_left=0,
+            )
+            dbm.db.session.add(db_task)
+            dbm.db.session.commit()
+    return task_id
+
+
 def post_task():
     return {}
 
 
-def delete_task():
-    return {}
+def delete_task(task_id: str) -> bool:
+    with dbm.db_rlock:
+        db_task = dbm.Task.query.get(task_id)
+        if db_task is None:
+            return False
+        for db_log_entry in db_task.log_entries:  # type: ignore
+            dbm.db.session.delete(db_log_entry)
+        dbm.db.session.delete(db_task)
+        dbm.db.session.commit()
+        return True
+
 
 
 def get_status():

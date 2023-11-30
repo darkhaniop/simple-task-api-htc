@@ -55,7 +55,9 @@ async def htc_cluster_collection_post(new_htc_cluster: HTCClusterCreate):
     """New HTC Cluster"""
 
     htc_cluster_create_schema = SchemaInstances.get_htc_cluster_create_schema()
-    new_htc_cluster_msm: msm_models.HTCCluster = htc_cluster_create_schema.loads(new_htc_cluster.model_dump_json())  # type: ignore
+    new_htc_cluster_msm: msm_models.HTCCluster = htc_cluster_create_schema.loads(
+        new_htc_cluster.model_dump_json()
+    )  # type: ignore
     htc_cluster = db_ops.create_htc_cluster(new_htc_cluster_msm)
 
     if db_ops.update_cluster_task(htc_cluster.id):  # type: ignore
@@ -168,7 +170,9 @@ async def task_collection_post(new_task: TaskCreate):
     "Create Task"
 
     task_create_schema = SchemaInstances.get_task_create_schema()
-    new_task_msm: msm_models.Task = task_create_schema.loads(new_task.model_dump_json()) # type: ignore
+    new_task_msm: msm_models.Task = task_create_schema.loads(
+        new_task.model_dump_json()
+    ) # type: ignore
 
     task = db_ops.create_task(new_task_msm)
 
@@ -211,12 +215,29 @@ async def update_task(
     "Update Task"
 
     task_update_request_schema = SchemaInstances.get_task_update_request_schema()
-    task_update_request: msm_models.TaskUpdateRequest = task_update_request_schema.loads(task_update.model_dump_json()) # type: ignore
+    task_update_request: msm_models.TaskUpdateRequest = task_update_request_schema.loads(
+        task_update.model_dump_json()
+    ) # type: ignore
     task = db_ops.update_task(task_id, task_update_request)
 
     task_schema = SchemaInstances.get_task_schema()
 
     return task_schema.dump(task)
+
+
+@router.delete(
+    "/tasks/{task_id}",
+    tags=["Tasks"],
+    openapi_extra=REMOVE_OPERATION_ID_AND_SUMMARY,
+)
+async def delete_task(
+    task_id: Annotated[str, Path(description="The identifier of the task.")],
+):
+    "Delete Task"
+
+    deleted_flag = db_ops.delete_task(task_id)
+
+    return {"deleted_flag": deleted_flag}
 
 
 @router.post(
@@ -227,7 +248,13 @@ async def update_task(
 )
 async def htc_job_events_post(log_entry: HTCJobEventPost):
     """Post a new log entry"""
-    pass
+
+    log_entry_create = SchemaInstances.get_htc_job_event_create_schema().loads(
+        log_entry.model_dump_json()
+    )
+    log_entry = db_ops.post_htc_job_event(log_entry_create)  # type: ignore
+
+    return SchemaInstances.get_htc_job_event_schema().dump(log_entry)
 
 
 @router.get(
