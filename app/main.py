@@ -3,6 +3,7 @@
 import asyncio
 from contextlib import asynccontextmanager
 import json
+import os
 from typing import cast
 
 from fastapi import FastAPI
@@ -12,6 +13,7 @@ from hypercorn.typing import Framework
 
 from .api import router as api_router
 from .api.schemas import OPENAPI_TAGS
+from .bg.htc_tracker import HTCTracker
 from .common import db_models
 from .version import __version__
 
@@ -24,7 +26,14 @@ async def fastapi_lifespan(app: FastAPI):
     # init db
     db_models.db.my_init()
 
+    htc_tracker = HTCTracker()
+    htc_tracker.init_app(log_filename=f"{os.getcwd()}/htc-log/0.log")
+    htc_tracker.start()
+
     yield
+
+    htc_tracker.stop()
+    htc_tracker.join()
 
     # close db
     print(f"lifespan close {app}")
