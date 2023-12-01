@@ -56,6 +56,13 @@ def delete_task(task_id: str) -> bool:
         return True
 
 
+def get_task_count() -> int:
+    with dbm.db_rlock:
+        n_tasks = dbm.Task.query.count()
+
+    return n_tasks
+
+
 def get_status():
     with dbm.db_rlock:
         utcnow = datetime.now(timezone.utc)
