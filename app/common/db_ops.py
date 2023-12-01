@@ -56,7 +56,6 @@ def delete_task(task_id: str) -> bool:
         return True
 
 
-
 def get_status():
     with dbm.db_rlock:
         utcnow = datetime.now(timezone.utc)

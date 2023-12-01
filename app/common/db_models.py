@@ -61,7 +61,7 @@ class SQLAlchemy:
 
     # session: Session
 
-    def my_init(self, echo: bool=False):
+    def my_init(self, echo: bool = False):
         """sqla my_init"""
 
         self.engine = sqlalchemy.create_engine("sqlite:///stapi_htc.db", echo=echo)

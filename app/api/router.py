@@ -79,7 +79,7 @@ def get_cluster_with_task(*, cluster_id: int | None = None) -> dict[str, Any]:
     if db_htc_cluster is None:
         return {"cluster": None, "task": None}
     htc_cluster = db_htc_cluster.dump_obj()
-    task_id: str | None = db_htc_cluster.task_id # type: ignore
+    task_id: str | None = db_htc_cluster.task_id  # type: ignore
 
     if task_id is not None and task_id != "-":
         db_task = db_ops.get_task_by_id(task_id)
@@ -89,8 +89,6 @@ def get_cluster_with_task(*, cluster_id: int | None = None) -> dict[str, Any]:
         task_dict = None
 
     return {"cluster": htc_cluster, "task": task_dict}
-
-
 
 
 @router.get(
@@ -171,8 +169,8 @@ async def task_collection_post(new_task: TaskCreate):
 
     task_create_schema = SchemaInstances.get_task_create_schema()
     new_task_msm: msm_models.Task = task_create_schema.loads(
-        new_task.model_dump_json()
-    ) # type: ignore
+        new_task.model_dump_json(),
+    )  # type: ignore
 
     task = db_ops.create_task(new_task_msm)
 
@@ -215,9 +213,9 @@ async def update_task(
     "Update Task"
 
     task_update_request_schema = SchemaInstances.get_task_update_request_schema()
-    task_update_request: msm_models.TaskUpdateRequest = task_update_request_schema.loads(
-        task_update.model_dump_json()
-    ) # type: ignore
+    task_update_request: msm_models.TaskUpdateRequest = (
+        task_update_request_schema.loads(task_update.model_dump_json())
+    )  # type: ignore
     task = db_ops.update_task(task_id, task_update_request)
 
     task_schema = SchemaInstances.get_task_schema()
