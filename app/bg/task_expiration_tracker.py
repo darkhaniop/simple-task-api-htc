@@ -1,15 +1,29 @@
+"""
+The TaskExpirationTracker extension
+
+Periodically checks and updates task states.
+"""
+
+import logging
 import threading
 import time
+from typing import Optional
 
 from ..common import db_ops
 
 
 class TaskExpirationTracker(threading.Thread):
-    stop_event: threading.Event
+    """TaskExpirationTracker background thread extension"""
 
-    def __init__(self) -> None:
+    stop_event: threading.Event
+    logger: logging.Logger
+
+    def __init__(self, logger: Optional[logging.Logger] = None) -> None:
         super().__init__(daemon=False)
         self.stop_event = threading.Event()
+        if logger is None:
+            logger = logging.getLogger(f"{self.__class__.__name__}.{self.name}")
+        self.logger = logger
 
     def init_app(self) -> None:
         """Initialize the app
@@ -32,6 +46,8 @@ class TaskExpirationTracker(threading.Thread):
         db_ops.reset_expired_tasks()
 
     def run(self) -> None:
+        self.logger.debug("thread starting")
+
         self.stop_event.clear()
         count_at = time.monotonic()
         while not self.stop_event.is_set():
@@ -41,3 +57,5 @@ class TaskExpirationTracker(threading.Thread):
                 # self.count_tasks()
                 self.reset_expired_tasks()
                 count_at = time.monotonic() + 12
+
+        self.logger.debug("thread exiting")
