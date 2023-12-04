@@ -186,7 +186,7 @@ class ServerStatus(BaseModel):
 
 
 class TaskCreate(BaseModel):
-    id: str = Field(default_factory=lambda: "")
+    id: str = ""
     state: int = 0
     subParams: Dict[str, str] = Field(default_factory=lambda: {})
     retriesLeft: int = 2

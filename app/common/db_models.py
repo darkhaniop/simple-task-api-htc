@@ -53,11 +53,16 @@ class SQLAlchemy:
     String = sqlalchemy.String
     Text = sqlalchemy.Text
     engine: sqlalchemy.Engine
+    _session: Optional[Session] = None
 
     @property
     def session(self) -> Session:
         """sqla session"""
-        return Session(self.engine)
+
+        if self._session is None:
+            self._session = Session(self.engine)
+
+        return self._session
 
     # session: Session
 

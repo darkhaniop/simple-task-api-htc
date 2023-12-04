@@ -83,12 +83,15 @@ def get_cluster_with_task(*, cluster_id: int | None = None) -> dict[str, Any]:
 
     if task_id is not None and task_id != "-":
         db_task = db_ops.get_task_by_id(task_id)
-        task_dict = db_task.dump_obj()  # pyright: ignore[reportOptionalMemberAccess]
+        if db_task is not None:
+            task_dict = asdict(db_task)  # pyright: ignore[reportOptionalMemberAccess]
+        else:
+            task_dict = None
     else:
         db_task = None
         task_dict = None
 
-    return {"cluster": htc_cluster, "task": task_dict}
+    return {"cluster": htc_cluster, "task": task_dict, "extra": {}}
 
 
 @router.get(
