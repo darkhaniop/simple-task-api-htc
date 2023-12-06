@@ -1,10 +1,10 @@
 # TaskAPI for HTCondor
 
-RESTful API for HTCondor HPC job scheduler. A FastAPI app that reproduces the spec and functionality the earlier Flask-based app.
+RESTful API for HTCondor HPC job scheduler. Allows HTCondor job submission, monitoring, and fetching job outputs. A background thread ensures that task state changes are recorded (and kept up-to-date) in a local SQLite database.
 
 ## Update from Flask (marshmallow) to FastAPI (Pydantic V2)
 
-Currently uses a combination of older models (marshmallow+SQLAlchemy.orm) and Pydantic V2 models (used for serialization/deserialization of HTTP payloads).
+This is a FastAPI app that reproduces the spec and functionality the earlier Flask-based app. Currently, it uses a combination of older models (marshmallow+SQLAlchemy.orm) and Pydantic V2 models (used for serialization/deserialization of HTTP payloads).
 
 ## Installation
 
