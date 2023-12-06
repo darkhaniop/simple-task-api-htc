@@ -249,6 +249,35 @@
             }
           }
         }
+      },
+      "delete": {
+        "tags": [
+          "Tasks"
+        ],
+        "description": "Delete Task",
+        "parameters": [
+          {
+            "name": "task_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "description": "The identifier of the task.",
+              "title": "Task Id"
+            },
+            "description": "The identifier of the task."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          }
+        }
       }
     },
     "/api/htc-job-events": {
@@ -596,17 +625,45 @@
             "default": 3
           },
           "clusterId": {
-            "type": "integer"
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ]
           },
           "procId": {
-            "type": "integer"
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ]
           },
           "expirationDate": {
-            "type": "string",
-            "format": "date-time"
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date-time"
+              },
+              {
+                "type": "null"
+              }
+            ]
           },
           "latestSubId": {
-            "type": "string"
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ]
           }
         },
         "type": "object",
@@ -617,7 +674,8 @@
       "TaskCreate": {
         "properties": {
           "id": {
-            "type": "string"
+            "type": "string",
+            "default": ""
           },
           "state": {
             "type": "integer",

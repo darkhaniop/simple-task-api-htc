@@ -1,5 +1,9 @@
 # Comparing API Specs (Flask+apispec vs. FastAPI)
 
+> [!NOTE]
+> The app does not use `static/generated-spec/openapi.json`, therefore, keeping this
+> file up-to-date is not required.
+
 To help with future debugging of the Simple Task API (STAPI) app, we put both versions
 of the STAPI OpenAPI 3.x specifications into the code repository.
 
