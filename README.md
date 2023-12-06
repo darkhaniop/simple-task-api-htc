@@ -1,6 +1,10 @@
-# TaskAPI for HTCondor (Pydantic V2)
+# TaskAPI for HTCondor
 
-RESTful API for HTCondor HPC job scheduler. In this branch we componse a FastAPI app that reproduces the spec using Pydantic V2 models.
+RESTful API for HTCondor HPC job scheduler. A FastAPI app that reproduces the spec and functionality the earlier Flask-based app.
+
+## Update from Flask (marshmallow) to FastAPI (Pydantic V2)
+
+Currently uses a combination of older models (marshmallow+SQLAlchemy.orm) and Pydantic V2 models (used for serialization/deserialization of HTTP payloads).
 
 ## Installation
 
